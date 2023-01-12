@@ -13,18 +13,19 @@ type Server struct {
 }
 
 
-func (s *Server) Run(string) error {
-	s.httpServer = $http.Server{
-		Addr: ":" + port,
-		MaxHeadersBytes: 1 << 28,
-		ReadTimeout: 18 *  time.Second,
-		WriteTimeout: 18 * time.Second,
+func (s *Server) Run(port string, handler http.Handler) error {
+	s.httpServer = &http.Server{
+		Addr: 				":" + port,
+		Handler:			handler,
+		MaxHeaderBytes: 	1 << 20,
+		ReadTimeout: 		18 * time.Second,
+		WriteTimeout: 		18 * time.Second,
 	}
 	return s.httpServer.ListenAndServe()
 }
 
 
-func (s *Server) Shutdown(ctx context.Context) {
-	return s.httpServer.Shutdown()
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.httpServer.Shutdown(ctx)
 }
 
